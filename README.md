@@ -2,6 +2,12 @@
 
 Provides a policy for Rack middleware which should be frozen by default to prevent mutability bugs in a multi-threaded environment.
 
+## Motivation
+
+I found issues due to unexpected state mutation when developing [Utopia](https://github.com/ioquatix/utopia). It only became apparent when running in production using multi-threaded passenger. Freezing the middleware (and related state) allowed me to identify these issues, find other issues, and helps prevent these issues in the future.
+
+Ideally, [this concept would be part of rack](https://github.com/rack/rack/issues/1010). However, regardless of whether Rack adopts a policy on immutable middleware, this gem provides the tools necessary to implement such a policy transparently on top of existing rack middleware where possible.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -32,10 +38,14 @@ In your `config.ru`, you prepare your app using the `#warmup method`;
 
 ```ruby
 warmup do |app|
-	# Freeze all the middleware so that mutation bugs are detected.
+	# Recursively freeze all the middleware so that mutation bugs are detected.
 	app.freeze
 end
 ```
+
+### Thar be the Monkeys
+
+Some Rack middleware is not easy to patch in a generic way, e.g. `Rack::URLMap`. As these are identified, they will be monkey patched by this gem automatically. Going forward, I hope to bring attention to this issue and ideally integrate these changes directly into Rack.
 
 ## Contributing
 
@@ -49,7 +59,7 @@ end
 
 Released under the MIT license.
 
-Copyright, 2015, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
+Copyright, 2017, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
