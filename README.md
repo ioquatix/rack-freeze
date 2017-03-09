@@ -2,6 +2,10 @@
 
 Provides a policy for Rack middleware which should be frozen by default to prevent mutability bugs in a multi-threaded environment.
 
+[![Build Status](https://secure.travis-ci.org/ioquatix/rack-freeze.svg)](http://travis-ci.org/ioquatix/rack-freeze)
+[![Code Climate](https://codeclimate.com/github/ioquatix/rack-freeze.svg)](https://codeclimate.com/github/ioquatix/rack-freeze)
+[![Coverage Status](https://coveralls.io/repos/ioquatix/rack-freeze/badge.svg)](https://coveralls.io/r/ioquatix/rack-freeze)
+
 ## Motivation
 
 I found issues due to unexpected state mutation when developing [Utopia](https://github.com/ioquatix/utopia). It only became apparent when running in production using multi-threaded passenger. Freezing the middleware (and related state) allowed me to identify these issues, find other issues, and helps prevent these issues in the future.
