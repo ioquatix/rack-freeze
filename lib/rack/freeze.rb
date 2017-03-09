@@ -20,34 +20,5 @@
 
 require_relative 'freeze/version'
 
-require_relative 'freeze/sendfile'
-require_relative 'freeze/show_exceptions'
-require_relative 'freeze/urlmap'
-
-module Rack
-	module Freeze
-		# Check if the given klass overrides `Kernel#freeze`.
-		def self.implements_freeze?(klass)
-			klass.instance_method(:freeze).owner != Kernel
-		end
-		
-		# Generate a subclass with a generic #freeze method to freeze all instance variables.
-		def self.[] klass
-			# Check if the class already has a custom implementation of #freeze.. which we assume works correctly.
-			return klass if implements_freeze?(klass)
-			
-			subclass = Class.new(klass) do
-				def freeze
-					# This ensures that all class variables are frozen.
-					self.instance_variables.each do |name|
-						self.instance_variable_get(name).freeze
-					end
-					
-					super
-				end
-			end
-			
-			return subclass
-		end
-	end
-end
+require_relative 'freeze/freezer'
+require_relative 'freeze/builder'

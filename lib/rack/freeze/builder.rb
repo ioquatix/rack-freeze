@@ -18,12 +18,21 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'rack/builder'
+require_relative 'freezer'
+
 module Rack
-	class ShowExceptions
-		def freeze
-			@app.freeze
+	module Freeze
+		module Builder
+			def use(klass, *args, &block)
+				super(Freeze[klass], *args, &block)
+			end
 			
-			super
+			def to_app
+				super.freeze
+			end
 		end
 	end
+	
+	Builder.prepend(Freeze::Builder)
 end

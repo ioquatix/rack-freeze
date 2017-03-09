@@ -20,52 +20,25 @@ Add this line to your application's Gemfile:
 gem 'rack-freeze'
 ```
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rack-freeze
-
 ## Usage
 
-For existing rack middleware, simply wrap it:
+Add this to your config.ru:
 
 ```ruby
-use Rack::Freeze[Rack::Logger]
+require 'rack/freeze'
 ```
 
-This will make a subclass of `Rack::Logger` if required with a working implementation of `#freeze`.
-
-In your `config.ru`, you prepare your app using the `#warmup method`;
-
-```ruby
-warmup do |app|
-	# Recursively freeze all the middleware so that mutation bugs are detected.
-	app.freeze
-end
-```
+Now all your middleware will be frozen by default.
 
 ### What bugs does this fix?
 
-So, instead of writing
+It guarantees, within the limits of the freeze API, that middleware won't mutate during a request.
 
 ```ruby
-use External::Middleware
+use Middleware
 ```
 
-you write
-
-```ruby
-use Rack::Freeze[External::Middleware]
-```
-
-That ensures that `External::Middleware` will correctly freeze itself and all subsequent apps. Additionally, if `External::Middleware` mutates it's state, it will throw an exception. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
-
-### Thar be the Monkeys
-
-Some Rack middleware is not easy to patch in a generic way, e.g. `Rack::URLMap`. As these are identified, they will be monkey patched by this gem automatically. Going forward, I hope to bring attention to this issue and ideally integrate these changes directly into Rack.
+If `Middleware` mutates it's state, it will throw an exception. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
 
 ## Contributing
 

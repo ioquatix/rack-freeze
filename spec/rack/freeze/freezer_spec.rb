@@ -1,4 +1,3 @@
-require "spec_helper"
 
 RSpec.describe Rack::Freeze do
 	it "should detect class has \#freeze" do

@@ -19,14 +19,29 @@
 # THE SOFTWARE.
 
 module Rack
-	class URLMap
-		def freeze
-			@map.each do |location, app|
-				location.freeze
-				app.freeze
+	module Freeze
+		# Check if the given klass overrides `Kernel#freeze`.
+		def self.implements_freeze?(klass)
+			klass.instance_method(:freeze).owner != Kernel
+		end
+		
+		# Generate a subclass with a generic #freeze method to freeze all instance variables.
+		def self.[] klass
+			# Check if the class already has a custom implementation of #freeze.. which we assume works correctly.
+			return klass if implements_freeze?(klass)
+			
+			subclass = Class.new(klass) do
+				def freeze
+					# This ensures that all class variables are frozen.
+					self.instance_variables.each do |name|
+						self.instance_variable_get(name).freeze
+					end
+					
+					super
+				end
 			end
 			
-			super
+			return subclass
 		end
 	end
 end
