@@ -43,6 +43,22 @@ warmup do |app|
 end
 ```
 
+### What bugs does this fix?
+
+So, instead of writing
+
+```ruby
+use External::Middleware
+```
+
+you write
+
+```ruby
+use Rack::Freeze[External::Middleware]
+```
+
+That ensures that `External::Middleware` will correctly freeze itself and all subsequent apps. Additionally, if `External::Middleware` mutates it's state, it will throw an exception. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
+
 ### Thar be the Monkeys
 
 Some Rack middleware is not easy to patch in a generic way, e.g. `Rack::URLMap`. As these are identified, they will be monkey patched by this gem automatically. Going forward, I hope to bring attention to this issue and ideally integrate these changes directly into Rack.
