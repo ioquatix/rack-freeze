@@ -35,10 +35,26 @@ Now all your middleware will be frozen by default.
 It guarantees, within the limits of the freeze API, that middleware won't mutate during a request.
 
 ```ruby
-use Middleware
+# This modifies `Rack::Builder#use` and `Rack::Builder#to_app` to generate a frozen stack of middleware.
+require 'rack/freeze'
+
+class NonThreadSafeMiddleware
+	def initialize(app)
+		@app = app
+		@state = 0
+	end
+	
+	def call(env)
+		@state += 1
+		
+		return @app.call(env)
+	end
+end
+
+use NonThreadSafeMiddleware
 ```
 
-If `Middleware` mutates it's state, it will throw an exception. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
+As `NonThreadSafeMiddleware` mutates it's state `@state += 1`, it will raise a `RuntimeError`. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
 
 ## Contributing
 
