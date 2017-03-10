@@ -54,7 +54,7 @@ end
 use NonThreadSafeMiddleware
 ```
 
-As `NonThreadSafeMiddleware` mutates it's state `@state += 1`, it will raise a `RuntimeError`. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
+As `NonThreadSafeMiddleware` mutates it's state `@state += 1`, it will raise a `RuntimeError`. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior. [5 out of 4 dentists agree that multi-threaded programming is hard to get right](http://www.rubyinside.com/does-the-gil-make-your-ruby-code-thread-safe-6051.html).
 
 ### How to write thread-safe middleware?
 
