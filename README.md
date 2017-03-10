@@ -56,6 +56,36 @@ use NonThreadSafeMiddleware
 
 As `NonThreadSafeMiddleware` mutates it's state `@state += 1`, it will raise a `RuntimeError`. In a multi-threaded web-server, unprotected mutation of internal state will lead to undefined behavior.
 
+### How to write thread-safe middleware?
+
+There are two options: Don't mutate state, or if you need to for the purposes of performance, implement `#freeze` and use data-structures from [concurrent-ruby](https://github.com/ruby-concurrency/concurrent-ruby).
+
+```ruby
+require 'concurrent/map'
+
+# Cache every request based on the path. Don't do this in production :)
+class CacheEverythingForever
+	def initialize(app)
+		@app = app
+		@cache_all_the_things = Concurrent::Map.new
+	end
+	
+	# Because you supply your own implementation of #freeze, Rack::Freeze won't touch this middleware.
+	def freeze
+		@app.freeze
+		
+		super
+	end
+	
+	def call(env)
+		# Use the thread-safe `Concurrent::Map` to fetch the value or store it if it doesn't exist already.
+		@cache_all_the_things.fetch_or_store(env[Rack::PATH_INFO]) do
+			@app.call(env)
+		end
+	end
+end
+```
+
 ## Contributing
 
 1. Fork it
