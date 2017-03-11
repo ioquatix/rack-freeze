@@ -32,7 +32,7 @@ RSpec.shared_context "middleware builder" do
 	it_behaves_like "frozen middleware"
 end
 
-class BrokenMiddleware
+class FaultyMiddleware
 	def initialize(app)
 		@app = app
 	end

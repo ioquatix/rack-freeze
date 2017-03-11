@@ -1,5 +1,5 @@
 
-require_relative 'frozen_stack'
+require_relative 'builder'
 
 RSpec.describe StatefulMiddleware do
 	include_context "middleware builder"
@@ -13,10 +13,10 @@ RSpec.describe GoodMiddleware do
 	include_context "middleware builder"
 end
 
-RSpec.describe 'Faulty #freeze' do
+RSpec.describe FaultyMiddleware do
 	let(:builder) do
 		Rack::Builder.new do
-			use BrokenMiddleware
+			use FaultyMiddleware
 			use GoodMiddleware
 			
 			run proc{}
@@ -37,7 +37,7 @@ RSpec.describe 'Builder#generate_map' do
 			end
 			
 			map '/bar' do
-				use BrokenMiddleware
+				use FaultyMiddleware
 				use GoodMiddleware
 				run proc{}
 			end
