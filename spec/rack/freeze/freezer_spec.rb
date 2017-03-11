@@ -1,26 +1,45 @@
 
 RSpec.describe Rack::Freeze do
-	it "should detect class has \#freeze" do
-		klass = Class.new(Object) do
+	let(:class_with_freeze) do
+		Class.new(Object) do
 			def freeze
 			end
 		end
-		
-		expect(Rack::Freeze.implements_freeze?(klass)).to be_truthy
+	end
+	
+	it "should detect class has \#freeze" do
+		expect(Rack::Freeze::Freezer.new(class_with_freeze).implements_freeze?).to be_truthy
+	end
+	
+	let(:class_without_freeze) do
+		Class.new(Object)
 	end
 	
 	it "should detect class without \#freeze" do
-		klass = Class.new(Object)
-		
-		expect(Rack::Freeze.implements_freeze?(klass)).to be_falsey
+		expect(Rack::Freeze::Freezer.new(class_without_freeze).implements_freeze?).to be_falsey
 	end
 	
-	it "should make instance with freeze" do
-		klass = Class.new(Object) do
+	let(:default_app) {proc{|env| nil}}
+	let(:app_class) do
+		Class.new(Object) do
+			def initialize(app)
+				@app = app
+			end
+			
 			attr :app
 		end
+	end
+	
+	it "should make a frozen instance" do
+		instance = Rack::Freeze::Freezer.new(app_class).new(default_app)
+		expect(instance).to be_frozen
+		expect(instance.app).to be_frozen
+	end
+	
+	it "should generate a nice class string" do
+		instance = Rack::Freeze::Freezer.new(app_class)
 		
-		expect(Rack::Freeze.implements_freeze?(klass)).to be_falsey
-		expect(Rack::Freeze.implements_freeze?(Rack::Freeze[klass])).to be_truthy
+		expect(instance.to_s).to include "Freezer"
+		expect(instance.to_s).to include app_class.to_s
 	end
 end

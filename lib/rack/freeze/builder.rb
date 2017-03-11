@@ -25,7 +25,7 @@ module Rack
 	module Freeze
 		module Builder
 			def use(klass, *args, &block)
-				super(Freeze[klass], *args, &block)
+				super Freezer.new(klass), *args, &block
 			end
 			
 			def to_app

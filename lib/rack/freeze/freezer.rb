@@ -20,28 +20,41 @@
 
 module Rack
 	module Freeze
-		# Check if the given klass overrides `Kernel#freeze`.
-		def self.implements_freeze?(klass)
-			klass.instance_method(:freeze).owner != Kernel
-		end
-		
-		# Generate a subclass with a generic #freeze method to freeze all instance variables.
-		def self.[] klass
-			# Check if the class already has a custom implementation of #freeze.. which we assume works correctly.
-			return klass if implements_freeze?(klass)
+		class Freezer
+			def initialize(klass)
+				@klass = klass
+			end
 			
-			subclass = Class.new(klass) do
-				def freeze
-					# This ensures that all class variables are frozen.
-					self.instance_variables.each do |name|
-						self.instance_variable_get(name).freeze
-					end
-					
-					super
+			def to_s
+				"#{self.class}<#{@klass}>"
+			end
+			
+			private def freeze_instance_variables(instance)
+				# This ensures that all instance variables are frozen.
+				instance.instance_variables.each do |name|
+					instance.instance_variable_get(name).freeze
 				end
 			end
 			
-			return subclass
+			# Check if the given klass overrides `Kernel#freeze`.
+			def implements_freeze?
+				@klass.instance_method(:freeze).owner != Kernel
+			end
+			
+			def new(*args, &block)
+				instance = @klass.new(*args, &block)
+				
+				unless implements_freeze?
+					freeze_instance_variables(instance)
+				end
+				
+				return instance.freeze
+			end
+		end
+		
+		# Return a wrapper that will freeze the instance after calling `#new`.
+		def self.[] klass
+			Freezer[klass]
 		end
 	end
 end

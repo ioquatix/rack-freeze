@@ -32,7 +32,7 @@ Now all your middleware will be frozen by default.
 
 ### What bugs does this fix?
 
-It guarantees, within the limits of the freeze API, that middleware won't mutate during a request.
+It guarantees as much as is possible, that middleware won't mutate during a request.
 
 ```ruby
 # This modifies `Rack::Builder#use` and `Rack::Builder#to_app` to generate a frozen stack of middleware.
@@ -72,6 +72,8 @@ class CacheEverythingForever
 	
 	# Because you supply your own implementation of #freeze, Rack::Freeze won't touch this middleware.
 	def freeze
+		return if frozen?
+		
 		@app.freeze
 		
 		super
