@@ -28,6 +28,10 @@ module Rack
 				super Freezer.new(klass), *args, &block
 			end
 			
+			def run(app)
+				super app.freeze
+			end
+			
 			def to_app
 				super.freeze
 			end

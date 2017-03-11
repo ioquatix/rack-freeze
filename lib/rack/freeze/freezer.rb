@@ -29,26 +29,8 @@ module Rack
 				"#{self.class}<#{@klass}>"
 			end
 			
-			private def freeze_instance_variables(instance)
-				# This ensures that all instance variables are frozen.
-				instance.instance_variables.each do |name|
-					instance.instance_variable_get(name).freeze
-				end
-			end
-			
-			# Check if the given klass overrides `Kernel#freeze`.
-			def implements_freeze?
-				@klass.instance_method(:freeze).owner != Kernel
-			end
-			
 			def new(*args, &block)
-				instance = @klass.new(*args, &block)
-				
-				unless implements_freeze?
-					freeze_instance_variables(instance)
-				end
-				
-				return instance.freeze
+				@klass.new(*args, &block).freeze
 			end
 		end
 		
