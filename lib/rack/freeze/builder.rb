@@ -37,6 +37,4 @@ module Rack
 			end
 		end
 	end
-	
-	Builder.prepend(Freeze::Builder)
 end

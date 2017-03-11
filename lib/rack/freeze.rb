@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'freeze/version'
-
-require_relative 'freeze/freezer'
 require_relative 'freeze/builder'
+
+# Enforce the policy globally.
+Rack::Builder.prepend(Rack::Freeze::Builder)
