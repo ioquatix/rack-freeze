@@ -33,10 +33,5 @@ module Rack
 				@klass.new(*args, &block).freeze
 			end
 		end
-		
-		# Return a wrapper that will freeze the instance after calling `#new`.
-		def self.[] klass
-			Freezer[klass]
-		end
 	end
 end
