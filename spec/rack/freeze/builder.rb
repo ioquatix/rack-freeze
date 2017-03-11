@@ -5,6 +5,7 @@ RSpec.shared_examples_for "frozen middleware" do
 		
 		expect(current).to_not be_nil
 		
+		# This can't traverse into Rack::URLMap and I'm not really sure how it should do that.
 		while current
 			expect(current).to be_frozen
 			
