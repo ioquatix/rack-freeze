@@ -70,15 +70,6 @@ class CacheEverythingForever
 		@cache_all_the_things = Concurrent::Map.new
 	end
 	
-	# Because you supply your own implementation of #freeze, Rack::Freeze won't touch this middleware.
-	def freeze
-		return self if frozen?
-		
-		@app.freeze
-		
-		super
-	end
-	
 	def call(env)
 		# Use the thread-safe `Concurrent::Map` to fetch the value or store it if it doesn't exist already.
 		@cache_all_the_things.fetch_or_store(env[Rack::PATH_INFO]) do
