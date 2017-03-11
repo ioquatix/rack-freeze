@@ -72,7 +72,7 @@ class CacheEverythingForever
 	
 	# Because you supply your own implementation of #freeze, Rack::Freeze won't touch this middleware.
 	def freeze
-		return if frozen?
+		return self if frozen?
 		
 		@app.freeze
 		

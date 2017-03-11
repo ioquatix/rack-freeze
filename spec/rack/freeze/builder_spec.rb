@@ -25,3 +25,24 @@ RSpec.describe 'Faulty #freeze' do
 	
 	it_behaves_like "frozen middleware"
 end
+
+require 'rack/urlmap'
+
+RSpec.describe 'Builder#generate_map' do
+	let(:builder) do
+		Rack::Builder.new do
+			map '/foo' do
+				use GoodMiddleware
+				run proc{}
+			end
+			
+			map '/bar' do
+				use BrokenMiddleware
+				use GoodMiddleware
+				run proc{}
+			end
+		end
+	end
+	
+	it_behaves_like "frozen middleware"
+end

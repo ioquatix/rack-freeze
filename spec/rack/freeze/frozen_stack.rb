@@ -3,6 +3,8 @@ RSpec.shared_examples_for "frozen middleware" do
 	it "should be entirely frozen" do
 		current = builder.to_app
 		
+		expect(current).to_not be_nil
+		
 		while current
 			expect(current).to be_frozen
 			
@@ -15,17 +17,17 @@ RSpec.shared_context "middleware builder" do
 	let(:env) {Hash.new}
 	
 	let(:builder) do
-		# We need to give lexical scope for ruby to find it :)
-		middleware = described_class
-		
-		Rack::Builder.new do
-			use middleware
-			
-			run lambda { |env| [404, {}, []] }
+		Rack::Builder.new.tap do |builder|
+			builder.use described_class
+			builder.run lambda { |env| [404, {}, []] }
 		end
 	end
 	
 	let(:app) {builder.to_app}
+	
+	it "should generate a valid app" do
+		expect(app).to_not be_nil
+	end
 	
 	it_behaves_like "frozen middleware"
 end
@@ -39,7 +41,7 @@ class BrokenMiddleware
 	
 	# Broken implementation of freeze doesn't call @app.freeze
 	def freeze
-		return if frozen?
+		return self if frozen?
 		
 		super
 	end
@@ -54,7 +56,7 @@ class GoodMiddleware
 	
 	# Broken implementation of freeze doesn't call @app.freeze
 	def freeze
-		return if frozen?
+		return self if frozen?
 		
 		@app.freeze
 		
