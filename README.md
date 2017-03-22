@@ -39,16 +39,16 @@ It guarantees as much as is possible, that middleware won't mutate during a requ
 require 'rack/freeze'
 
 class NonThreadSafeMiddleware
-	def initialize(app)
-		@app = app
-		@state = 0
-	end
-	
-	def call(env)
-		@state += 1
-		
-		return @app.call(env)
-	end
+  def initialize(app)
+    @app = app
+    @state = 0
+  end
+
+  def call(env)
+    @state += 1
+
+    return @app.call(env)
+  end
 end
 
 use NonThreadSafeMiddleware
@@ -65,17 +65,17 @@ require 'concurrent/map'
 
 # Cache every request based on the path. Don't do this in production :)
 class CacheEverythingForever
-	def initialize(app)
-		@app = app
-		@cache_all_the_things = Concurrent::Map.new
-	end
-	
-	def call(env)
-		# Use the thread-safe `Concurrent::Map` to fetch the value or store it if it doesn't exist already.
-		@cache_all_the_things.fetch_or_store(env[Rack::PATH_INFO]) do
-			@app.call(env)
-		end
-	end
+  def initialize(app)
+    @app = app
+    @cache_all_the_things = Concurrent::Map.new
+  end
+
+  def call(env)
+    # Use the thread-safe `Concurrent::Map` to fetch the value or store it if it doesn't exist already.
+    @cache_all_the_things.fetch_or_store(env[Rack::PATH_INFO]) do
+      @app.call(env)
+    end
+  end
 end
 ```
 
