@@ -70,6 +70,15 @@ class CacheEverythingForever
 		@cache_all_the_things = Concurrent::Map.new
 	end
 	
+	def freeze
+		return self if frozen?
+		
+		# Don't freeze @cache_all_the_things
+		@app.freeze
+		
+		super
+	end
+	
 	def call(env)
 		# Use the thread-safe `Concurrent::Map` to fetch the value or store it if it doesn't exist already.
 		@cache_all_the_things.fetch_or_store(env[Rack::PATH_INFO]) do
