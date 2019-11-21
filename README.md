@@ -43,10 +43,10 @@ class NonThreadSafeMiddleware
 		@app = app
 		@state = 0
 	end
-	
+
 	def call(env)
 		@state += 1
-		
+
 		return @app.call(env)
 	end
 end
@@ -69,22 +69,32 @@ class CacheEverythingForever
 		@app = app
 		@cache_all_the_things = Concurrent::Map.new
 	end
-	
+
 	def freeze
 		return self if frozen?
-		
+
 		# Don't freeze @cache_all_the_things
 		@app.freeze
-		
+
 		super
 	end
-	
+
 	def call(env)
 		# Use the thread-safe `Concurrent::Map` to fetch the value or store it if it doesn't exist already.
 		@cache_all_the_things.fetch_or_store(env[Rack::PATH_INFO]) do
 			@app.call(env)
 		end
 	end
+end
+```
+
+### Can I ignore a specific middleware ?
+
+In some particular cases, we want to be able to ignore a mutable middleware. This can be done in `config.ru` :
+
+```ruby
+Rack::Freeze.configure do |config|
+  config.ignored_middlewares << MutableButFineMiddleware
 end
 ```
 
