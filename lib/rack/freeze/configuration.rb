@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Klaxit <http://www.klaxit.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,21 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'freeze/version'
-require_relative 'freeze/configuration'
-require_relative 'freeze/builder'
-
 module Rack
   module Freeze
-    def self.configure
-      yield(configuration)
-    end
+    class Configuration
+      attr_accessor :ignored_middlewares
 
-    def self.configuration
-      @configuration ||= Rack::Freeze::Configuration.new
+      def initialize
+        @ignored_middlewares = []
+      end
     end
   end
 end
-
-# Enforce the policy globally.
-Rack::Builder.prepend(Rack::Freeze::Builder)
