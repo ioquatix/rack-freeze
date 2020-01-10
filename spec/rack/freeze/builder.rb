@@ -1,4 +1,6 @@
 
+require 'rack/freeze'
+
 RSpec.shared_examples_for "frozen middleware" do
 	it "should be entirely frozen" do
 		current = builder.to_app

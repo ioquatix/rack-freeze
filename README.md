@@ -2,7 +2,9 @@
 
 Provides a policy for Rack middleware which should be frozen by default to prevent mutability bugs in a multi-threaded environment.
 
-[![Build Status](https://secure.travis-ci.org/ioquatix/rack-freeze.svg)](http://travis-ci.org/ioquatix/rack-freeze)
+**In Rack 2.1+, you can use `Builder::freeze_app` instead of this gem.**
+
+[![Build Status](https://travis-ci.com/ioquatix/rack-freeze.svg)](https://travis-ci.com/ioquatix/rack-freeze)
 [![Code Climate](https://codeclimate.com/github/ioquatix/rack-freeze.svg)](https://codeclimate.com/github/ioquatix/rack-freeze)
 [![Coverage Status](https://coveralls.io/repos/ioquatix/rack-freeze/badge.svg)](https://coveralls.io/r/ioquatix/rack-freeze)
 
@@ -100,7 +102,7 @@ end
 
 Released under the MIT license.
 
-Copyright, 2017, by [Samuel G. D. Williams](http://www.codeotaku.com/samuel-williams).
+Copyright, 2017, by [Samuel G. D. Williams](http://www.codeotaku.com).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

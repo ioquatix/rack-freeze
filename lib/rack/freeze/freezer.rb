@@ -18,6 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require "ruby2_keywords"
+
 module Rack
 	module Freeze
 		class Freezer
@@ -29,8 +31,8 @@ module Rack
 				"#{self.class}<#{@klass}>"
 			end
 			
-			def new(*args, &block)
-				@klass.new(*args, &block).freeze
+			ruby2_keywords def new(*arguments, &block)
+				@klass.new(*arguments, &block).freeze
 			end
 		end
 	end

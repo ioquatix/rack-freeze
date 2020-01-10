@@ -19,13 +19,14 @@
 # THE SOFTWARE.
 
 require 'rack/builder'
+
 require_relative 'freezer'
 
 module Rack
 	module Freeze
 		module Builder
-			def use(klass, *args, &block)
-				super Freezer.new(klass), *args, &block
+			def use(klass, *arguments, &block)
+				super Freezer.new(klass), *arguments, &block
 			end
 			
 			def run(app)
