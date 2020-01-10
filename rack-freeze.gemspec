@@ -16,8 +16,6 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "rack", "~> 2.0"
 	
-	spec.add_dependency "ruby2_keywords"
-	
 	spec.add_development_dependency "covered"
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "rake", "~> 10.0"
