@@ -19,13 +19,14 @@
 # THE SOFTWARE.
 
 require 'rack/builder'
+require 'ruby2_keywords'
 
 require_relative 'freezer'
 
 module Rack
 	module Freeze
 		module Builder
-			def use(klass, *arguments, &block)
+			ruby2_keywords def use(klass, *arguments, &block)
 				super Freezer.new(klass), *arguments, &block
 			end
 			
